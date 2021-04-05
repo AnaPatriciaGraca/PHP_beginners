@@ -4,8 +4,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST"){
   var_dump($_POST);
 }
 
-
 ?>
+
 <!DOCTYPE html>
 <html>
 <head>
@@ -37,7 +37,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST"){
         </optgroup>
       </select>
   </div>
-  
+
     <button>Send</button>
 
 </form>
