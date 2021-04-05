@@ -1,8 +1,9 @@
 <?php
+require 'includes/database.php';
 
 if ($_SERVER["REQUEST_METHOD"] == "POST"){
+  $conn = getDB();
 
-require 'includes/database.php';
 //avoid SQL injection with mysqli_escape_string()
 /*  $sql = "INSERT INTO article(title, content, publiched_at)
           VALUES('" . mysqli_escape_string($conn, $_POST['title']) . "', '"
