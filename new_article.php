@@ -3,22 +3,30 @@
 if ($_SERVER["REQUEST_METHOD"] == "POST"){
 
 require 'includes/database.php';
+//avoid SQL injection with mysqli_escape_string()
+/*  $sql = "INSERT INTO article(title, content, publiched_at)
+          VALUES('" . mysqli_escape_string($conn, $_POST['title']) . "', '"
+                    . mysqli_escape_string($conn, $_POST['content']) . "', '"
+                    . mysqli_escape_string($conn, $_POST['publiched_at']) . "')"; */
+    $sql = "INSERT INTO article(title, content, publiched_at)
+            VALUES(?, ?, ?)";
 
-  $sql = "INSERT INTO article(title, content, publiched_at)
-          VALUES('" . $_POST['title'] . "', '"
-                    . $_POST['content'] . "', '"
-                    . $_POST['publiched_at'] . "')";
+//  $results = mysqli_query($conn, $sql);
+  $stmt = mysqli_prepare($conn, $sql);
 
 
-  $results = mysqli_query($conn, $sql);
-
-
-  if ($results === false) {
+  if ($stmt === false) {
       echo mysqli_error($conn);
   } else {
-      //return the automatic id created
-      $id = mysqli_insert_id($conn);
-      echo "Inserted record with ID: $id";
+      mysqli_stmt_bind_param($stmt, "sss", $_POST['title'], $_POST['content'], $_POST['publiched_at'] );
+      if (mysqli_stmt_execute($stmt)){
+        //return the automatic id created
+        $id = mysqli_insert_id($conn);
+        echo "Inserted record with ID: $id";
+      }else{
+        echo_stmt_error($stmt);
+      }
+
   }
 
 }
