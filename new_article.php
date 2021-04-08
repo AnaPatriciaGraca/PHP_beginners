@@ -1,6 +1,6 @@
 <?php
 require 'includes/database.php';
-
+//de claração de variaveis
 $errors=[];
 $title = '';
 $content = '';
@@ -19,7 +19,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST"){
     $errors[] = 'Content is required';
   }
   if(empty($errors)){
-    var_dump($errors); exit;
+    var_dump($errors);
 
     //avoid SQL injection with mysqli_escape_string()
     /*  $sql = "INSERT INTO article(title, content, publiched_at)
@@ -30,12 +30,14 @@ if ($_SERVER["REQUEST_METHOD"] == "POST"){
     VALUES(?, ?, ?)";
 
     //  $results = mysqli_query($conn, $sql);
+    //alternative to mysqli_escape_string()
     $stmt = mysqli_prepare($conn, $sql);
 
 
     if ($stmt === false) {
       echo mysqli_error($conn);
     } else {
+      // use stmt to insert the 3 strings
       mysqli_stmt_bind_param($stmt, "sss", $title, $content, $published_at);
       if (mysqli_stmt_execute($stmt)){
         //return the automatic id created
@@ -44,12 +46,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST"){
       }else{
         echo_stmt_error($stmt);
       }
-
     }
-
   }
-
-
 }
 
  ?>
@@ -71,12 +69,12 @@ if ($_SERVER["REQUEST_METHOD"] == "POST"){
 
   <div>
     <label for="title">Title</label>
-    <input type="text" name="title" id="title" placeholder="Article Title" value=<?= $title?>>
+    <input type="text" name="title" id="title" placeholder="Article Title" value=<?= htmlspecialchars($title)?>>
   </div>
 
   <div>
     <label for="content">Content</label>
-    <textarea name="content" rows="4" cols="40" id="content" placeholder="Article Content"><?= $content?></textarea>
+    <textarea name="content" rows="4" cols="40" id="content" placeholder="Article Content"><?= htmlspecialchars($content)?></textarea>
   </div>
 
   <div>
