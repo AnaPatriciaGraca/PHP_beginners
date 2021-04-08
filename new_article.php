@@ -20,9 +20,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST"){
   }
   if($published_at != ''){
     // expected format -> see documentation (YYYY-MM-DD HH:MM:SS) retorna falso se nao conseguiu fazer o parsing
-    $date_time = date_create_from_format('Y-m-d H:i', $published_at);
+    $date_time = date_create_from_format('Y-m-d H:i:s', $published_at);
     if ($date_time === false) {
-      //$errors[] = 'Please enter a valid form "yyyy-mm-dd hh:mm:ss"'; ---- NOT WORKING BROWSER
+      $errors[] = 'Please enter a valid form "yyyy-mm-dd hh:mm:ss"';
     }else{
       //varifica se a data existe (exemplo: 30 de Fevereiro)
       $date_errors = date_get_last_errors();
@@ -48,7 +48,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST"){
     $stmt = mysqli_prepare($conn, $sql);
 
 
-    if ($stmt === false) {
+    if ($stmt === false) { 
       echo mysqli_error($conn);
     } else {
       //para nao inserir a data 0000-00-00 00:00 na base de dados (tem de ser antes do bind)
@@ -100,7 +100,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST"){
 
   <div>
     <label for="published_at">Publication date and time</label>
-    <input type="datetime-local" pattern="[0-9]{4}-[0-9]{2}-[0-9]{2} [0-9]{2}:[0-9]{2}:[0-9]{2}" name="publiched_at" id="published_at" value=<?= $published_at?>>
+    <input type="datetime-local" name="publiched_at" id="published_at" value=<?= $published_at?>>
   </div>
 
   <button>Add</button>
