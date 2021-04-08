@@ -18,6 +18,20 @@ if ($_SERVER["REQUEST_METHOD"] == "POST"){
   if($content == ''){
     $errors[] = 'Content is required';
   }
+  if($published_at != ''){
+    // expected format -> see documentation (YYYY-MM-DD HH:MM:SS) retorna falso se nao conseguiu fazer o parsing
+    $date_time = date_create_from_format('Y-m-d H:i:s', $published_at);
+    if ($date_time === false) {
+      $errors[] = 'Invalid date and time';
+    }else{
+      //varifica se a data existe (exemplo: 30 de Fevereiro)
+      $date_errors = date_get_last_errors();
+      if ($date_errors['warning_count'] > 0){
+        $errors[] = 'Invalid date and time';
+      }
+    }
+  }
+
   if(empty($errors)){
     var_dump($errors);
 
@@ -37,7 +51,12 @@ if ($_SERVER["REQUEST_METHOD"] == "POST"){
     if ($stmt === false) {
       echo mysqli_error($conn);
     } else {
-      // use stmt to insert the 3 strings
+      //para nao inserir a data 0000-00-00 00:00 na base de dados (tem de ser antes do bind)
+      if ( $published_at == ''){
+        $published_at = null;
+      }
+
+      // use stmt to insert the 3 strings (se a ultima for null o servidor reconhece)
       mysqli_stmt_bind_param($stmt, "sss", $title, $content, $published_at);
       if (mysqli_stmt_execute($stmt)){
         //return the automatic id created
