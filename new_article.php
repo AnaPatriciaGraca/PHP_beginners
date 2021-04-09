@@ -7,10 +7,10 @@ $content = '';
 $published_at = '';
 
 if ($_SERVER["REQUEST_METHOD"] == "POST"){
-  $conn = getDB();
+ 
   $title = $_POST['title'];
   $content = $_POST['content'];
-  $published_at = $_POST['publiched_at'];
+  $published_at = $_POST['published_at'];
 
   if ($title == ''){
     $errors[] = 'Title is required';
@@ -32,7 +32,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST"){
     }
   }
 
-  if(!empty($errors)){
+
+  if(empty($errors)){
+    $conn = getDB();
     var_dump($errors);
 
     //avoid SQL injection with mysqli_escape_string()
@@ -40,7 +42,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST"){
     VALUES('" . mysqli_escape_string($conn, $_POST['title']) . "', '"
     . mysqli_escape_string($conn, $_POST['content']) . "', '"
     . mysqli_escape_string($conn, $_POST['publiched_at']) . "')"; */
-    $sql = "INSERT INTO article(title, content, publiched_at)
+    $sql = "INSERT INTO article(title, content, published_at)
     VALUES(?, ?, ?)";
 
     //  $results = mysqli_query($conn, $sql);
@@ -61,9 +63,15 @@ if ($_SERVER["REQUEST_METHOD"] == "POST"){
       if (mysqli_stmt_execute($stmt)){
         //return the automatic id created
         $id = mysqli_insert_id($conn);
-//        echo "Inserted record with ID: $id";
-        // redireccionar para a página que contem o
-        //header("Location : article.php?id=$id");exit;
+        if (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] != 'off') {
+          $protocol = 'https';
+      } else {
+          $protocol = 'http';
+      }
+
+      header("Location: $protocol://" . $_SERVER['HTTP_HOST'] . "/article.php?id=$id");
+      exit;
+
       }else{
         echo_stmt_error($stmt);
       }
@@ -100,7 +108,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST"){
 
   <div>
     <label for="published_at">Publication date and time</label>
-    <input type="datetime-local" name="publiched_at" id="published_at" value=<?= $published_at?>>
+    <input type="datetime-local" name="published_at" id="published_at" value=<?= $published_at?>>
   </div>
 
   <button>Add</button>
