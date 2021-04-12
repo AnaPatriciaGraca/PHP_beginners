@@ -63,14 +63,15 @@ if ($_SERVER["REQUEST_METHOD"] == "POST"){
       if (mysqli_stmt_execute($stmt)){
         //return the automatic id created
         $id = mysqli_insert_id($conn);
+        //don't use relative paths
         if (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] != 'off') {
           $protocol = 'https';
       } else {
           $protocol = 'http';
       }
-
+      //absolUte URL
       header("Location: $protocol://" . $_SERVER['HTTP_HOST'] . "/article.php?id=$id");
-      exit;
+      exit; //sair porque mudamos de pagina
 
       }else{
         echo_stmt_error($stmt);
@@ -98,6 +99,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST"){
 
   <div>
     <label for="title">Title</label>
+    <!-- special chars because people can insert stuff like <title></title> and we want to display it-->
     <input type="text" name="title" id="title" placeholder="Article Title" value=<?= htmlspecialchars($title)?>>
   </div>
 

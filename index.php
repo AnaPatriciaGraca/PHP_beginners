@@ -5,7 +5,7 @@ $conn = getDB();
 
 $sql = "SELECT *
         FROM article
-        ORDER BY publiched_at;";
+        ORDER BY published_at;";
 
 $results = mysqli_query($conn, $sql);
 
@@ -18,6 +18,10 @@ if ($results === false) {
 ?>
 
 <?php require 'includes/header.php'; ?>
+
+
+<!-- Link to insert new article -->
+<a href="new_article.php">New Article</a>
 
         <?php if (empty($articles)): ?>
             <p>No articles found.</p>
