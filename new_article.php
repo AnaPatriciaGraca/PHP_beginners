@@ -1,7 +1,7 @@
 <?php
 require 'includes/database.php';
+require 'includes/article.php';
 //de claração de variaveis
-$errors=[];
 $title = '';
 $content = '';
 $published_at = '';
@@ -12,26 +12,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST"){
   $content = $_POST['content'];
   $published_at = $_POST['published_at'];
 
-  if ($title == ''){
-    $errors[] = 'Title is required';
-  }
-  if($content == ''){
-    $errors[] = 'Content is required';
-  }
-  if($published_at != ''){
-    // expected format -> see documentation (YYYY-MM-DD HH:MM:SS) retorna falso se nao conseguiu fazer o parsing
-    $date_time = date_create_from_format('Y-m-d H:i:s', $published_at);
-    if ($date_time === false) {
-      $errors[] = 'Please enter a valid form "yyyy-mm-dd hh:mm:ss"';
-    }else{
-      //varifica se a data existe (exemplo: 30 de Fevereiro)
-      $date_errors = date_get_last_errors();
-      if ($date_errors['warning_count'] > 0){
-        $errors[] = 'Invalid date and time';
-      }
-    }
-  }
-
+  $errors = validateArticle($title, $content, $published_at);
 
   if(empty($errors)){
     $conn = getDB();
@@ -48,7 +29,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST"){
     //  $results = mysqli_query($conn, $sql);
     //alternative to mysqli_escape_string()
     $stmt = mysqli_prepare($conn, $sql);
-
 
     if ($stmt === false) { 
       echo mysqli_error($conn);
@@ -85,39 +65,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST"){
 <?php require 'includes/header.php';?>
 
 <h2>New Article</h2>
-<?php
-  if (!empty($errors)):?>
-    <ul>
-      <?php
-        foreach ($errors as $error):?>
-          <li><?=$error ?></li>
-        <?php endforeach; ?>
-    </ul>
-  <?php endif; ?>
 
-<form method="post">
-
-  <div>
-    <label for="title">Title</label>
-    <!-- special chars because people can insert stuff like <title></title> and we want to display it-->
-    <input type="text" name="title" id="title" placeholder="Article Title" value=<?= htmlspecialchars($title)?>>
-  </div>
-
-  <div>
-    <label for="content">Content</label>
-    <textarea name="content" rows="4" cols="40" id="content" placeholder="Article Content"><?= htmlspecialchars($content)?></textarea>
-  </div>
-
-  <div>
-    <label for="published_at">Publication date and time</label>
-    <input type="datetime-local" name="published_at" id="published_at" value=<?= $published_at?>>
-  </div>
-
-  <button>Add</button>
-
-
-
-</form>
-
-
+<?php require 'includes/article_form.php'; ?>
 <?php require 'includes/footer.php';?>
