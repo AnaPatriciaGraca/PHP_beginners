@@ -2,6 +2,7 @@
 
 require 'includes/database.php';
 require 'includes/article.php';
+require 'includes/url.php';
 
 $conn = getDB();
 
@@ -57,15 +58,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST"){
       mysqli_stmt_bind_param($stmt, "sssi", $title, $content, $published_at, $id);
 
       if (mysqli_stmt_execute($stmt)){
-        //don't use relative paths
-        if (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] != 'off') {
-          $protocol = 'https';
-      } else {
-          $protocol = 'http';
-      }
-      //absolUte URL
-      header("Location: $protocol://" . $_SERVER['HTTP_HOST'] . "/article.php?id=$id");
-      exit; //sair porque mudamos de pagina
+
+        redirect("/article.php?id=$id");
 
       }else{
         echo_stmt_error($stmt);

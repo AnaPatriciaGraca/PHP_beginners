@@ -1,6 +1,7 @@
 <?php
 require 'includes/database.php';
 require 'includes/article.php';
+require 'includes/url.php';
 //de claração de variaveis
 $title = '';
 $content = '';
@@ -43,16 +44,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST"){
       if (mysqli_stmt_execute($stmt)){
         //return the automatic id created
         $id = mysqli_insert_id($conn);
-        //don't use relative paths
-        if (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] != 'off') {
-          $protocol = 'https';
-      } else {
-          $protocol = 'http';
-      }
-      //absolUte URL
-      header("Location: $protocol://" . $_SERVER['HTTP_HOST'] . "/article.php?id=$id");
-      exit; //sair porque mudamos de pagina
 
+        redirect("/article.php?id=$id");
+        
       }else{
         echo_stmt_error($stmt);
       }
